@@ -1,0 +1,4 @@
+/backend/.venv
+/.svelte-kit
+/node_modules
+.env
