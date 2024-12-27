@@ -18,5 +18,7 @@ In Dev:
     The Svelte routes will not be replaced, and redirect to the /api route.
 
 In Prod:
-    Flask routes: in prod, the VITE_API_URL is the url of the backend, so the url is http://main-reach.pockethost.io/get-posts
+    Flask routes: in prod, the VITE_API_URL is the url of the backend, so the url is https://backend.tjl.sh/get-posts
+    ** This has to be set in the env file because it is replaced during the build process. **
+    Thus, setting the env in the docker compose file will have no effect, because the url has already been replaced during the build process.
     Svelte api routes: /api

@@ -1,0 +1,28 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      platforms: ["linux/amd64"]
+    image: lawtj/test-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      platforms: ["linux/amd64"]
+    image: lawtj/test-backend
+    ports:
+      - "8727:8727"
+    volumes:
+      - ./backend:/app
+    environment:
+      - PORT=8727 
