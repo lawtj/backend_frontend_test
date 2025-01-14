@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-      platforms: ["linux/amd64", "linux/arm64"]
+      platforms: ["linux/arm64"]
     image: lawtj/test-frontend
     ports:
       - "3000:3000"
@@ -18,7 +18,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
-      platforms: ["linux/amd64", "linux/arm64"]
+      platforms: ["linux/arm64"]
     image: lawtj/test-backend
     ports:
       - "8727:8727"
@@ -32,5 +32,19 @@ services:
       - PORT=8727
     command: flask run --host=0.0.0.0 --port=8727
 
+  pb:
+    build:
+      context: .
+      dockerfile: Dockerfile.pb
+    ports:
+      - "8080:8080"
+    volumes:
+      - pb_migrations:/pb/pb_migrations
+      - pb_hooks:/pb/pb_hooks
+      - pb_data:/pb/pb_data
+  
 volumes:
-  frontend_node_modules: 
+  frontend_node_modules:
+  pb_migrations:
+  pb_hooks: 
+  pb_data:
