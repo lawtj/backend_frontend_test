@@ -37,12 +37,12 @@ services:
       context: .
       dockerfile: Dockerfile.pb
     ports:
-      - "8080:8080"
+      - "8081:8081"
     volumes:
       - pb_migrations:/pb/pb_migrations
       - pb_hooks:/pb/pb_hooks
       - pb_data:/pb/pb_data
-  
+
 volumes:
   frontend_node_modules:
   pb_migrations:
