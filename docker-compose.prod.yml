@@ -5,8 +5,10 @@ services:
       dockerfile: Dockerfile.frontend
       platforms: ["linux/amd64"]
       args:
-        - VITE_API_URL=https://backend.recipes.tjl.sh
-        - VITE_BACKEND_URL=http://backend:8727
+        - VITE_API_CLIENT_URL=https://backend.recipes.tjl.sh
+        - VITE_API_SERVER_URL=http://backend:8727
+        - VITE_PB_SERVER_URL=http://pb:8081
+        - VITE_PB_CLIENT_URL=https://pb.recipes.tjl.sh
     ports:
       - "3000:3000"
     command: node build

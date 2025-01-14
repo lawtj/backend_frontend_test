@@ -2,11 +2,13 @@
 
     let {data, form} = $props();
    
-    const apiUrl = import.meta.env.VITE_API_URL;
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const apiClientUrl = import.meta.env.VITE_API_CLIENT_URL;
+    const apiServerUrl = import.meta.env.VITE_API_SERVER_URL;
+    const pbServerUrl = import.meta.env.VITE_PB_SERVER_URL;
+    const pbClientUrl = import.meta.env.VITE_PB_CLIENT_URL;
     
     const healthCheck = async () => {
-        const response = await fetch(`${apiUrl}/health`);
+        const response = await fetch(`${apiClientUrl}/health`);
         const data = await response.json();
         console.log(data);
         healthresponse = JSON.stringify(data);
@@ -36,8 +38,10 @@
             <button class="btn btn-primary" type="submit">Health Check (backend)</button>
         </form>
     </div>
-    <p>The frontend API URL is: {apiUrl}</p>
-    <p>The backend API URL is: {backendUrl}</p>
+    <p>The frontend API URL is: {apiClientUrl}</p>
+    <p>The backend API URL is: {apiServerUrl}</p>
+    <p>The PocketBase server URL is: {pbServerUrl}</p>
+    <p>The PocketBase client URL is: {pbClientUrl}</p>
     <p>{healthresponse}</p>
     {#if form?.success}
         <p>{form.message}</p>
