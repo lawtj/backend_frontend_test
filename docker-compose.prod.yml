@@ -6,6 +6,7 @@ services:
       platforms: ["linux/amd64"]
       args:
         - VITE_API_URL=https://backend.tjl.sh
+        - VITE_BACKEND_URL=http://backend:8727
     ports:
       - "3000:3000"
     command: node build
