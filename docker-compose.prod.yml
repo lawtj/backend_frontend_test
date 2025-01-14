@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
       platforms: ["linux/amd64"]
+      args:
+        - VITE_API_URL=https://backend.tjl.sh
     ports:
       - "3000:3000"
     command: node build
