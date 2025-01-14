@@ -7,14 +7,11 @@ services:
     image: lawtj/test-frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - frontend_node_modules:/app/node_modules
     environment:
+      - NODE_ENV=production
       - VITE_BACKEND_URL=http://backend:8727
-    command: npm run dev -- --host 0.0.0.0 --port 3000
-    depends_on:
-      - backend
+    # No volumes mounted in production
+    command: node build
 
   backend:
     build:
@@ -24,15 +21,9 @@ services:
     image: lawtj/test-backend
     ports:
       - "8727:8727"
-    volumes:
-      - ./backend:/app
-      - /app/__pycache__
     environment:
       - FLASK_APP=app.py
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
+      - FLASK_ENV=production
+      - FLASK_DEBUG=0
       - PORT=8727
-    command: flask run --host=0.0.0.0 --port=8727
-
-volumes:
-  frontend_node_modules: 
+    command: gunicorn --bind 0.0.0.0:8727 app:app 

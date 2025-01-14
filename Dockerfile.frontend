@@ -1,20 +1,31 @@
 FROM node:20-alpine AS builder
 
 WORKDIR /app
+
+# Install dependencies first for better caching
 COPY frontend/package*.json ./
-RUN npm install
 
+# Install dependencies including optional platform-specific ones
+RUN npm install --platform=linux --arch=arm64 @rollup/rollup-linux-arm64-musl --save-optional && \
+    npm install
 
+# Copy the rest of the frontend code
 COPY frontend .
+
+# Build for production
 RUN npm run build
 
+# Production stage
 FROM node:20-alpine
 
 WORKDIR /app
+
+# Copy only the necessary files from builder
 COPY --from=builder /app/build build/
 COPY --from=builder /app/package.json .
 COPY --from=builder /app/node_modules node_modules/
 
-EXPOSE 5173
+EXPOSE 3000
 
+# Default to production preview (override in docker-compose for development)
 CMD ["node", "build"] 

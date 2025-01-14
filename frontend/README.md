@@ -3,7 +3,7 @@ There is a python flask backend.
 
 There is also a svelte api route for server functions.
 
-We want to be able to call all of these separately, in both prod and dev, from the svelte frontend. We can manage this with env variables.
+We want to be able to call all of these separately, in both     d and dev, from the svelte frontend. We can manage this with env variables.
 
 Code looks like this:
 

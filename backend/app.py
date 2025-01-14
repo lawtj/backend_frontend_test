@@ -6,7 +6,7 @@ from typing import Dict, Any
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes in development
 
-@app.route("/api/health")
+@app.route("/health")
 def health_check() -> Dict[str, Any]:
     return jsonify({"status": "healthy", "service": "flask-backend"})
 
