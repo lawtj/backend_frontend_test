@@ -3,13 +3,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
-      platforms: ["linux/amd64", "linux/arm64"]
-    image: lawtj/test-frontend
+      platforms: ["linux/amd64"]
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - VITE_BACKEND_URL=http://backend:8727
+      - VITE_BACKEND_URL=https://backend.tjl.sh
     # No volumes mounted in production
     command: node build
 
@@ -17,8 +16,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
-      platforms: ["linux/amd64", "linux/arm64"]
-    image: lawtj/test-backend
+      platforms: ["linux/amd64"]
     ports:
       - "8727:8727"
     environment:
