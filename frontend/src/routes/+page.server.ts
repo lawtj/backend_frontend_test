@@ -1,4 +1,4 @@
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const backendUrl = import.meta.env.VITE_API_SERVER_URL;
 
 export const actions = {
     default: async ({ request }) => {
