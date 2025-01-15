@@ -38,27 +38,80 @@ There is also a svelte api route for server functions.
 
 We want to be able to call all of these separately, in both dev and prod, from the svelte frontend. We can manage this with env variables.
 
-### Environment Variables
-- `VITE_API_CLIENT_URL`: the url that the CLIENT uses to call the API.
-    - we cannot use docker internal routing, because the client does not have access to the host network.
-- `VITE_API_SERVER_URL`: the url that the svelte server.ts uses to call the API.
-    - we CAN use docker internal routing, because the svelte server.ts is running in the same container as the backend.
-    - this is preferable because it avoids a DNS round trip.
-- `VITE_PB_SERVER_URL`: the url that the svelte server.ts uses to call the PocketBase server.
-- `VITE_PB_CLIENT_URL`: the url that the svelte client uses to call the PocketBase server.
+### Environment Variables in SvelteKit
+
+SvelteKit provides two main ways to handle environment variables:
+
+1. `$env/static/public` - For public variables available at build time
+   - Must be prefixed with `PUBLIC_`
+   - Available on both client and server
+   - In Docker, these must be provided as build args
+   - Cannot be changed after build
+
+2. `$env/static/private` - For private server-only variables available at build time
+   - Not prefixed
+   - Only available on server
+   - In Docker, these must be provided as build args
+   - Cannot be changed after build
+
+3. `$env/dynamic/private` - For private server-only variables available at runtime
+   - Not prefixed
+   - Only available on server
+   - Can be provided as regular Docker environment variables
+   - Can be changed at runtime
+
+Our configuration uses:
+- `PUBLIC_API_CLIENT_URL`: Public static variable for client-side API calls
+    - Must be provided at build time
+    - Cannot use Docker internal routing (client needs public URL)
+- `PUBLIC_PB_CLIENT_URL`: Public static variable for client-side PocketBase calls
+    - Must be provided at build time
+    - Cannot use Docker internal routing
+
+- `API_SERVER_URL`: Server-side API URL (can be static or dynamic)
+    - If static: Must be provided at build time
+    - If dynamic: Can be provided as runtime environment variable
+    - Can use Docker internal routing (e.g., http://backend:8727)
+- `PB_SERVER_URL`: Server-side PocketBase URL (can be static or dynamic)
+    - If static: Must be provided at build time
+    - If dynamic: Can be provided as runtime environment variable
+    - Can use Docker internal routing
 
 ### Local Development
-- run `docker compose up` which uses the docker-compose.yml file.
-- environment variables are loaded by the vite dev server from the `.env.development` file.
-    - VITE_API_CLIENT_URL=http://localhost:8727
-    - VITE_API_SERVER_URL=http://backend:8727 #note the use of docker internal routing.
+- Run `docker compose up` which uses the docker-compose.yml file
+- Environment variables are loaded from `.env.local` in the frontend directory
+    ```
+    PUBLIC_API_CLIENT_URL=http://localhost:8727
+    PUBLIC_PB_CLIENT_URL=http://localhost:8081
+    API_SERVER_URL=http://backend:8727
+    PB_SERVER_URL=http://pb:8081
+    ```
 
 ### Production
-- run `docker compose -f docker-compose.prod.yml up` which uses the docker-compose.prod.yml file.
-- environment variables are hardcoded in the docker-compose.prod.yml file. (in theory we could use a .env.production file, but then you'd have to commit that to the repo so it is available at build time.)
-    - VITE_API_CLIENT_URL=https://backend.tjl.sh
-    - VITE_API_SERVER_URL=http://backend:8727 #note the use of docker internal routing.
+- Run `docker compose -f docker-compose.prod.yml up`
+- Public variables must be provided as build args in Dockerfile.frontend and docker-compose.prod.yml
+- Server variables can either be:
+  1. Provided as build args if using static imports
+  2. Provided as runtime environment variables if using dynamic imports
+- Example docker-compose.prod.yml values:
+    ```
+    ARGS:
+    - PUBLIC_API_CLIENT_URL #will be entered as https://api.example.com on deployment system
+    - PUBLIC_PB_CLIENT_URL #will be entered as https://pb.example.com on deployment system
+    - API_SERVER_URL #will be entered as http://backend:8727 on deployment system
+    - PB_SERVER_URL #will be entered as http://pb:8081 on deployment system
+    ```
+- Example Dockerfile.frontend:
+    ```
+    ARG PUBLIC_API_CLIENT_URL
+    ARG PUBLIC_PB_CLIENT_URL
+    ARG API_SERVER_URL
+    ARG PB_SERVER_URL
+    ```
 
 ### Instructions
-- update the docker-compose-prod.yml file with the correct domain name for your services.
-- create .env.development
+1. Update docker-compose.prod.yml with your domain names
+2. Create .env.local in the frontend directory for development
+3. Choose between static or dynamic server variables based on your needs:
+   - Static: Add as build args in Dockerfile.frontend and docker-compose.prod.yml
+   - Dynamic: Add as environment variables in docker-compose.prod.yml
