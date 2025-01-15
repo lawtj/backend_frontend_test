@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Add build argument and set as env var for the build process
 ARG PUBLIC_API_CLIENT_URL
-ARG PUBLIC_API_CLIENT_URL
+ARG PUBLIC_PB_CLIENT_URL
 
 # Install dependencies first for better caching
 COPY frontend/package*.json ./
